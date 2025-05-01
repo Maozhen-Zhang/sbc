@@ -23,32 +23,33 @@ def init_checkpoint(args):
     today = datetime.date.today()
     args.project = f'{args.project}'
     args.checkpoint_dir = os.path.join(args.checkpoints, args.project)
+
+    args.checkpoint_dir += f"lambda-{str(args.lambda1)}_{str(args.lambda2)}_{str(args.lambda3)}_{str(args.lambda4)}_{str(args.lambda5)}"
     os.makedirs(args.checkpoint_dir, exist_ok=True)
 
 
 
 
 def save_checkpoint(result, args, is_best=False, filename='checkpoint.pth.tar',eval = False):
-    # if 'eval' in args.name or 'exp' in args.name:
-    #     pass
-    # else:
-    #     return
     def custom_serializer(obj):
         if isinstance(obj, torch.device):
-            return str(obj)  # 转换为字符串
+            return str(obj)  # 转换 torch.device 为字符串
         raise TypeError(f"Type {obj.__class__.__name__} not serializable")
 
+    # 保存模型和配置
     if eval:
         os.makedirs(os.path.join(args.checkpoint_dir, 'eval'), exist_ok=True)
         torch.save(result, os.path.join(args.checkpoint_dir, 'eval', filename))
     else:
         if is_best:
             filename = 'model_best.pth.tar'
-        torch.save(result, os.path.join(args.checkpoint_dir, filename))
-        with open('config.txt', 'w') as f:
-            # 将字典格式化为字符串并写入文件
-            # json.dump(args.__dict__, f, indent=4)
-            json_data = json.dumps(args.__dict__, default=custom_serializer)
+
+        save_model_path = os.path.join(args.checkpoint_dir, filename)
+        torch.save(result, save_model_path)
+
+        # ✅ 修正后的配置保存（方法1）
+        with open(f'{args.checkpoint_dir}/config.txt', 'w') as f:
+            json.dump(args.__dict__, f, indent=4, default=custom_serializer)
 
 
 def convert_models_to_fp32(model):

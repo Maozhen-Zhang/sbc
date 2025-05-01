@@ -38,7 +38,7 @@ def parse_option():
     parser.add_argument('--model', type=str, default='clip')
     parser.add_argument('--arch', type=str, default='ViT-B/32', choices=['vit_b32','ViT-B/32','ViT-B/16',"RN50", "RN101", "RN50x4"],)
     parser.add_argument('--pretrained', default=True, help =' whether to use pretrained model')
-    parser.add_argument('--method', type=str, default='badnoise',
+    parser.add_argument('--method', type=str, default='padding',
                         choices=['padding', 'random_patch', 'fixed_patch', 'badnoise', 'badfeature', 'malpoisnum'],
                         help='choose visual prompting method')
     parser.add_argument('--prompt_size', type=int, default=30,
@@ -92,7 +92,7 @@ def parse_option():
     # parser.add_argument('--backdoor', type=str, default=False,
     #                     help='is backdoor')
     parser.add_argument('--backdoor', action='store_true',help='is backdoor')
-    parser.add_argument('--mode', type=str, default="cleanlabel",
+    parser.add_argument('--mode', type=str, default="all2one",
                         help='backdoor type')
     parser.add_argument('--ori_label', type=int, default=0,
                         help='backdoor ori label')
@@ -117,6 +117,21 @@ def parse_option():
                         help='trigger resume')
     parser.add_argument('--resume_detect', type=str, default=None,
                         help='trigger resume')
+
+    parser.add_argument('--lambda1', type=float, default=0.01,
+                        help='hyper-params-mse')
+    parser.add_argument('--lambda2', type=float, default=0.01,
+                        help='hyper-params-norm')
+    parser.add_argument('--lambda3', type=float, default=0.001,
+                        help='hyper-params-ce')
+    parser.add_argument('--lambda4', type=float, default=0.001,
+                        help='hyper-params-adv')
+    parser.add_argument('--lambda5', type=float, default=0.001,
+                        help='hyper-params-adv')
+
+    parser.add_argument('--clip_model_name', type=str, default=None,
+                        help='trigger resume')
+
 
     # parser.add_argument('--', type=str, default=None,
     #                     help='')
